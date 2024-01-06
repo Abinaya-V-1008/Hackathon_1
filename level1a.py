@@ -54,79 +54,27 @@ cost.append([data['restaurants']['r0']['neighbourhood_distance'][18]] + data['ne
 cost.append([data['restaurants']['r0']['neighbourhood_distance'][19]] + data['neighbourhoods']['n19']['distances'])
 
 
-#print(cost)
 print(len(cost))
-
-"""
-import numpy as np
-
-def knapsack_paths(distance_matrix, capacity_matrix, max_capacity, num_paths=3):
-    num_nodes = len(distance_matrix)
-
-    # Create a 3D array to store the maximum capacity and minimum distance for each subproblem
-    dp = np.zeros((num_nodes, max_capacity + 1, num_paths + 1), dtype=object)
-
-    for i in range(num_nodes):
-        for j in range(max_capacity + 1):
-            dp[i][j][0] = (0, [])  # Initialize the base case for the first path
-
-    for path_count in range(1, num_paths + 1):
-        for capacity in range(1, max_capacity + 1):
-            for node in range(num_nodes):
-                best_capacity, best_distance, best_path = dp[node][capacity][path_count - 1]
-
-                for prev_node in range(num_nodes):
-                    if prev_node != node and capacity >= capacity_matrix[node]:
-                        remaining_capacity = capacity - capacity_matrix[node]
-                        new_capacity = best_capacity + capacity_matrix[node]
-                        new_distance = best_distance + distance_matrix[prev_node][node]
-
-                        if dp[prev_node][remaining_capacity][path_count - 1][0] + capacity_matrix[node] > new_capacity:
-                            new_capacity = dp[prev_node][remaining_capacity][path_count - 1][0] + capacity_matrix[node]
-                            new_distance = dp[prev_node][remaining_capacity][path_count - 1][1] + distance_matrix[prev_node][node]
-                            best_path = dp[prev_node][remaining_capacity][path_count - 1][2] + [node]
-
-                        if new_capacity > best_capacity or (new_capacity == best_capacity and new_distance < best_distance):
-                            dp[node][capacity][path_count] = (new_capacity, new_distance, best_path)
-
-    # Find the path with the maximum capacity among the last path_count
-    max_capacity_path = max(dp[:, max_capacity, num_paths], key=lambda x: x[0])
-
-    return max_capacity_path[2]
-
-
-max_capacity = 600
-
-paths = knapsack_paths(cost, capacity, max_capacity)
-
-for i, path in enumerate(paths):
-    print(f"Path {i + 1}: {path} | Capacity: {sum(capacity_matrix[node] for node in path)} | Distance: {sum(distance_matrix[path[i - 1]][path[i]] for i in range(1, len(path)))}")
-"""
-
-#print(cost)
-#print(capacity)
 
 import numpy as np
 
 def nearest_neighbor(current_node, unvisited_nodes, distance_matrix):
-    # Find the nearest neighbor from the current node
     nearest_node = min(unvisited_nodes, key=lambda node: distance_matrix[current_node][node])
     return nearest_node
 
 def create_delivery_slots(distance_matrix, capacity_matrix):
     num_nodes = len(distance_matrix)
-    depot = 0  # Assume the depot is at index 0
+    depot = 0 
 
-    # Initialize variables
+
     unvisited_nodes = set(range(1, num_nodes))
     delivery_slots = {}
 
-    # Create delivery slots for each vehicle
     vehicle_count = 0
     while unvisited_nodes:
         current_node = depot
         remaining_capacity = capacity_matrix[vehicle_count]
-        path = ["r{}".format(current_node)]  # path starts and ends at the depot
+        path = ["r{}".format(current_node)]  
 
         while unvisited_nodes and remaining_capacity > 0:
             nearest_node = nearest_neighbor(current_node, unvisited_nodes, distance_matrix)
@@ -144,6 +92,12 @@ def create_delivery_slots(distance_matrix, capacity_matrix):
 
 result = create_delivery_slots(cost,capacity)
 print(result)
+
+output_json = {"v0": {"path": result}}
+with open('level1a_output.json', 'w') as json_file:
+    json.dump(output_json, json_file, indent=2)
+
+print("JSON file 'output1.json' created successfully.")
 
 
     
